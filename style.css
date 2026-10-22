@@ -1,0 +1,95 @@
+/* Doodlepad's site: the app's paper, ink and sun yellow. System fonts only
+   (nothing loaded from other servers). One reading column. */
+:root {
+  --paper: #F6F1E7;
+  --card: #FFFDF8;
+  --ink: #26262C;
+  --muted: #5E5A55;
+  --line: #26262C;
+  --shadow: rgba(38, 38, 44, 0.16);
+  --sun: #FFD95E;
+  --mint: #62D9A6;
+  --display: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #1D1D21; --card: #28282E; --ink: #F3EEE4; --muted: #B9B2A6;
+    --line: #F3EEE4; --shadow: rgba(0, 0, 0, 0.45); --sun: #F2C94C; --mint: #4CC08F;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 64px;
+}
+main { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 36px; }
+
+header { display: flex; align-items: center; gap: 16px; }
+.badge {
+  flex: none; width: 56px; height: 56px; border-radius: 16px;
+  background: var(--sun); border: 2.5px solid var(--line);
+  box-shadow: 4px 4px 0 var(--shadow);
+  display: grid; place-items: center;
+}
+.badge svg { width: 30px; height: 30px; }
+.badge path { fill: none; stroke: #26262C; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+h1 {
+  font-family: var(--display); font-weight: 900; font-size: clamp(30px, 6vw, 40px);
+  line-height: 1.1; margin: 0; text-wrap: balance;
+}
+.lead { margin: 4px 0 0; color: var(--muted); font-size: 15px; }
+
+nav { display: flex; flex-wrap: wrap; gap: 8px; }
+nav a {
+  font-weight: 700; text-decoration: none; padding: 6px 14px; border-radius: 999px;
+  border: 2px solid var(--line); background: var(--card);
+}
+nav a[aria-current="page"] { background: var(--sun); color: #26262C; }
+
+.card {
+  background: var(--card); border: 2.5px solid var(--line); border-radius: 20px;
+  box-shadow: 5px 5px 0 var(--shadow);
+  padding: 22px 24px; display: flex; flex-direction: column; gap: 14px;
+}
+.card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.card li { display: grid; grid-template-columns: 26px 1fr; gap: 10px; align-items: start; }
+.card li span { min-width: 0; }
+.tick {
+  width: 22px; height: 22px; margin-top: 3px; border-radius: 50%;
+  background: var(--mint); border: 2px solid var(--line);
+  display: grid; place-items: center;
+}
+.tick svg { width: 12px; height: 12px; }
+.tick path { fill: none; stroke: #26262C; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+section { display: flex; flex-direction: column; gap: 10px; }
+h2 {
+  font-family: var(--display); font-weight: 800; font-size: 22px; line-height: 1.25;
+  margin: 0; text-wrap: balance;
+}
+p { margin: 0; }
+section ul { margin: 0; padding-left: 22px; display: grid; gap: 6px; }
+.path {
+  font-weight: 700;
+  background: color-mix(in srgb, var(--sun) 35%, transparent);
+  border-radius: 6px; padding: 0 4px;
+}
+.email { font-weight: 700; user-select: all; -webkit-user-select: all; overflow-wrap: anywhere; }
+a { color: inherit; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+a:focus-visible { outline: 3px solid var(--sun); outline-offset: 2px; border-radius: 4px; }
+
+footer {
+  border-top: 2px dashed color-mix(in srgb, var(--line) 30%, transparent);
+  padding-top: 20px; color: var(--muted); font-size: 15px;
+}
