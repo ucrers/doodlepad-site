@@ -79,7 +79,26 @@ h2 {
   margin: 0; text-wrap: balance;
 }
 p { margin: 0; }
-section ul { margin: 0; padding-left: 22px; display: grid; gap: 6px; }
+h3 {
+  font-family: var(--display); font-weight: 800; font-size: 18px; line-height: 1.3;
+  margin: 8px 0 0;
+}
+section ul, section ol { margin: 0; padding-left: 22px; display: grid; gap: 6px; }
+section li > ul { margin-top: 6px; }
+/* Guide sections jump under a little room at the top. */
+section[id] { scroll-margin-top: 16px; }
+/* The guide's contents: small chips that wrap, lighter than the page menu. */
+.toc-title {
+  font-family: var(--body); font-size: 13px; font-weight: 800;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+}
+section ul.toc { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.toc a {
+  display: inline-block; text-decoration: none; font-size: 15px; font-weight: 600; line-height: 1.3;
+  padding: 6px 12px; border-radius: 999px; background: var(--card);
+  border: 1.5px solid color-mix(in srgb, var(--line) 30%, transparent);
+}
+.toc a:hover { background: color-mix(in srgb, var(--sun) 45%, var(--card)); border-color: var(--line); }
 .path {
   font-weight: 700;
   background: color-mix(in srgb, var(--sun) 35%, transparent);
