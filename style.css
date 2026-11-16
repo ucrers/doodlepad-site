@@ -42,8 +42,9 @@ header { display: flex; align-items: center; gap: 16px; }
   box-shadow: 4px 4px 0 var(--shadow);
   display: grid; place-items: center;
 }
-.badge svg { width: 30px; height: 30px; }
-.badge path { fill: none; stroke: #26262C; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+/* The app icon's d/p spiral, cropped to the mark (viewBox 12 12 76 76). */
+.badge svg { width: 36px; height: 36px; }
+.badge path { fill: none; stroke: #26262C; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
 h1 {
   font-family: var(--display); font-weight: 900; font-size: clamp(30px, 6vw, 40px);
   line-height: 1.1; margin: 0; text-wrap: balance;
