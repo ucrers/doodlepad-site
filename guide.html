@@ -16,7 +16,9 @@
     <svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 5 L7 9 L11 5"/></svg>
   </button>
   <p class="toc-title">Guide</p>
+  <input class="side-search" type="search" placeholder="Search the guide" aria-label="Search the guide" autocomplete="off">
   <ul class="side-toc" id="side-toc">
+    <li><a href="#start">Quick start</a></li>
     <li><a href="#basics">The basics</a></li>
     <li><a href="#boards">Boards, paper and pages</a></li>
     <li><a href="#pen">Pen and marker</a></li>
@@ -37,6 +39,10 @@
     <li><a href="#home">The home screen</a></li>
     <li><a href="#settings">Settings</a></li>
     <li><a href="#pro">Doodlepad Pro</a></li>
+    <li class="side-sep" aria-hidden="true"></li>
+    <li><a class="page" href="./">Support</a></li>
+    <li><a class="page" href="privacy.html">Privacy Policy</a></li>
+    <li><a class="page" href="impressum.html">Impressum</a></li>
   </ul>
 </nav>
 <main>
@@ -50,12 +56,17 @@
     </div>
   </header>
 
-  <nav aria-label="Pages">
-    <a href="./">Support</a>
-    <a href="guide.html" aria-current="page">Guide</a>
-    <a href="privacy.html">Privacy Policy</a>
-    <a href="impressum.html">Impressum</a>
-  </nav>
+  <p class="search-empty" hidden>Nothing found. Try another word.</p>
+
+  <section id="start" class="card">
+    <h2>Quick start</h2>
+    <ol>
+      <li>On the home screen, tap ＋ on the <strong>New board</strong> card.</li>
+      <li>Draw with the pen. Two fingers move and zoom the board.</li>
+      <li>Tap the pen again for its color, size and tip.</li>
+      <li>Hold anything with a finger to select it, then drag it, or let go for Copy, Delete and more.</li>
+    </ol>
+  </section>
 
   <section id="basics">
     <h2>The basics</h2>
@@ -284,6 +295,8 @@
       <li>On iPad, <span class="path">Settings → Draw with finger</span> sets what a finger does. Turn it off so that only the Pencil draws, and a finger moves the board, so your hand can rest on the screen.</li>
       <li>Pressing harder draws thicker or darker, depending on the pen's tip. The Apple Pencil (USB-C) doesn't sense pressure, so its lines stay even.</li>
       <li>Holding to select works with a finger, not with the Pencil.</li>
+      <li><strong>Double tap</strong> the Pencil (2nd generation or Pro) to do what you chose in the iPad's <span class="path">Settings → Apple Pencil</span>: switch to the eraser and back, switch to the last tool, or open the color or size settings. The Pencil Pro's <strong>squeeze</strong> works the same way, with its own choice there.</li>
+      <li><strong>Hover:</strong> on an iPad that senses the Pencil above the screen, a dot shows where the pen will draw, in its color and size. With the eraser, its circle shows.</li>
     </ul>
   </section>
 
@@ -321,13 +334,17 @@
 
   <section id="settings">
     <h2>Settings</h2>
-    <p>On a board, open <span class="path">⋯</span> and tap the gear. Settings are for each device.</p>
+    <p>On a board, open <span class="path">⋯</span> and tap the gear. Settings are for each device. <strong>Guide</strong> at the top opens this page.</p>
+    <h3>Touch</h3>
     <ul>
-      <li><strong>Line up with other items:</strong> red guide lines while you move things.</li>
       <li><strong>Draw with finger</strong> (iPad): see <a href="#pencil">Apple Pencil</a>.</li>
       <li><strong>Two-finger tap to undo.</strong></li>
       <li><strong>Lock rotation:</strong> two fingers don't turn the board.</li>
       <li><strong>Hold to pick:</strong> holding an item selects it.</li>
+    </ul>
+    <h3>While drawing</h3>
+    <ul>
+      <li><strong>Line up with other items:</strong> red guide lines while you move things.</li>
       <li><strong>Hide bars sideways:</strong> on a phone held sideways, the top bar hides once you draw. A button brings it back.</li>
       <li><strong>Keep screen on</strong>, <strong>Drawing sound</strong> and <strong>Haptics</strong> (iPhone).</li>
     </ul>
@@ -355,7 +372,7 @@
   const sidebar = document.getElementById('sidebar');
   const toggle = sidebar.querySelector('.sidebar-toggle');
   const list = sidebar.querySelector('.side-toc');
-  const links = [...list.querySelectorAll('a')];
+  const links = [...list.querySelectorAll('a[href^="#"]')];
   const now = sidebar.querySelector('.sidebar-now');
   const setOpen = (open) => {
     sidebar.classList.toggle('open', open);
@@ -364,7 +381,7 @@
     if (open && lit) keepInView(lit, list);
   };
   toggle.addEventListener('click', () => setOpen(!sidebar.classList.contains('open')));
-  links.forEach((link) => link.addEventListener('click', () => setOpen(false)));
+  list.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setOpen(false)));
 
   const byId = new Map(links.map((link) => [link.hash.slice(1), link]));
   // The lit link stays in view in what scrolls the list (the sidebar on a
@@ -389,7 +406,30 @@
   const observer = new IntersectionObserver((entries) => {
     entries.filter((entry) => entry.isIntersecting).forEach((entry) => light(entry.target.id));
   }, { rootMargin: '-20% 0px -75% 0px' });
-  document.querySelectorAll('main section[id]').forEach((section) => observer.observe(section));
+  const sections = [...document.querySelectorAll('main section[id]')];
+  sections.forEach((section) => observer.observe(section));
+
+  // Search: only the sections with every word typed stay, here and in the
+  // list; Escape clears it.
+  const search = sidebar.querySelector('.side-search');
+  const empty = document.querySelector('.search-empty');
+  const filter = () => {
+    const words = search.value.toLowerCase().split(/\s+/).filter(Boolean);
+    let found = 0;
+    sections.forEach((section) => {
+      const text = section.textContent.toLowerCase();
+      const hit = words.every((word) => text.includes(word));
+      section.hidden = !hit;
+      byId.get(section.id)?.parentElement.toggleAttribute('hidden', !hit);
+      if (hit) found += 1;
+    });
+    empty.hidden = found > 0;
+    if (words.length) window.scrollTo(0, 0);
+  };
+  search.addEventListener('input', filter);
+  search.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') { search.value = ''; filter(); }
+  });
 })();
 </script>
 </body>
