@@ -9,7 +9,36 @@
   <link rel="icon" href="apple-touch-icon.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
 </head>
-<body>
+<body class="docs">
+<nav class="sidebar" id="sidebar" aria-label="Guide contents">
+  <button class="sidebar-toggle" type="button" aria-expanded="false" aria-controls="side-toc">
+    <span>Contents <span class="sidebar-now"></span></span>
+    <svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 5 L7 9 L11 5"/></svg>
+  </button>
+  <p class="toc-title">Guide</p>
+  <ul class="side-toc" id="side-toc">
+    <li><a href="#basics">The basics</a></li>
+    <li><a href="#boards">Boards, paper and pages</a></li>
+    <li><a href="#pen">Pen and marker</a></li>
+    <li><a href="#eraser">Eraser</a></li>
+    <li><a href="#pick">Selecting and moving</a></li>
+    <li><a href="#actions">Action bar and hold menu</a></li>
+    <li><a href="#text">Text and sticky notes</a></li>
+    <li><a href="#add">The ＋ button</a></li>
+    <li><a href="#shapes">Shapes</a></li>
+    <li><a href="#images">Pictures</a></li>
+    <li><a href="#mindmaps">Mind maps</a></li>
+    <li><a href="#math">Math formulas (Pro)</a></li>
+    <li><a href="#ruler">Ruler</a></li>
+    <li><a href="#autoscroll">Auto-scroll</a></li>
+    <li><a href="#pencil">Apple Pencil</a></li>
+    <li><a href="#layers">Layers</a></li>
+    <li><a href="#export">Export</a></li>
+    <li><a href="#home">The home screen</a></li>
+    <li><a href="#settings">Settings</a></li>
+    <li><a href="#pro">Doodlepad Pro</a></li>
+  </ul>
+</nav>
 <main>
   <header>
     <div class="badge" aria-hidden="true">
@@ -27,32 +56,6 @@
     <a href="privacy.html">Privacy Policy</a>
     <a href="impressum.html">Impressum</a>
   </nav>
-
-  <section aria-labelledby="toc-title">
-    <h2 id="toc-title" class="toc-title">On this page</h2>
-    <ul class="toc">
-      <li><a href="#basics">The basics</a></li>
-      <li><a href="#boards">Boards, paper and pages</a></li>
-      <li><a href="#pen">Pen and marker</a></li>
-      <li><a href="#eraser">Eraser</a></li>
-      <li><a href="#pick">Selecting and moving</a></li>
-      <li><a href="#actions">The action bar and the hold menu</a></li>
-      <li><a href="#text">Text and sticky notes</a></li>
-      <li><a href="#add">The ＋ button</a></li>
-      <li><a href="#shapes">Shapes</a></li>
-      <li><a href="#images">Pictures</a></li>
-      <li><a href="#mindmaps">Mind maps</a></li>
-      <li><a href="#math">Math formulas (Pro)</a></li>
-      <li><a href="#ruler">Ruler</a></li>
-      <li><a href="#autoscroll">Auto-scroll</a></li>
-      <li><a href="#pencil">Apple Pencil</a></li>
-      <li><a href="#layers">Layers</a></li>
-      <li><a href="#export">Export</a></li>
-      <li><a href="#home">The home screen</a></li>
-      <li><a href="#settings">Settings</a></li>
-      <li><a href="#pro">Doodlepad Pro</a></li>
-    </ul>
-  </section>
 
   <section id="basics">
     <h2>The basics</h2>
@@ -345,5 +348,49 @@
 
   <footer>Doodlepad for iPhone and iPad · <a href="./">Support</a> · <a href="privacy.html">Privacy Policy</a> · <a href="impressum.html">Impressum</a></footer>
 </main>
+<script>
+// The sidebar: the section being read lit (the one under the top fifth of
+// the screen), and on a phone its Contents bar opening and closing.
+(() => {
+  const sidebar = document.getElementById('sidebar');
+  const toggle = sidebar.querySelector('.sidebar-toggle');
+  const list = sidebar.querySelector('.side-toc');
+  const links = [...list.querySelectorAll('a')];
+  const now = sidebar.querySelector('.sidebar-now');
+  const setOpen = (open) => {
+    sidebar.classList.toggle('open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    const lit = sidebar.querySelector('[aria-current="true"]');
+    if (open && lit) keepInView(lit, list);
+  };
+  toggle.addEventListener('click', () => setOpen(!sidebar.classList.contains('open')));
+  links.forEach((link) => link.addEventListener('click', () => setOpen(false)));
+
+  const byId = new Map(links.map((link) => [link.hash.slice(1), link]));
+  // The lit link stays in view in what scrolls the list (the sidebar on a
+  // wide screen, the folded-out list on a phone); set by hand, as
+  // scrollIntoView would move the page too.
+  const keepInView = (link, box) => {
+    const top = link.offsetTop - list.offsetTop * (box === list ? 1 : 0), bottom = top + link.offsetHeight;
+    if (top < box.scrollTop) box.scrollTop = top - 8;
+    else if (bottom > box.scrollTop + box.clientHeight) box.scrollTop = bottom - box.clientHeight + 8;
+  };
+  const light = (id) => links.forEach((link) => {
+    if (link === byId.get(id)) {
+      link.setAttribute('aria-current', 'true');
+      now.textContent = '· ' + link.textContent;
+      keepInView(link, sidebar);
+    } else {
+      link.removeAttribute('aria-current');
+    }
+  });
+  // At the top, over the first section's heading, the first is lit.
+  light(location.hash.slice(1) || links[0].hash.slice(1));
+  const observer = new IntersectionObserver((entries) => {
+    entries.filter((entry) => entry.isIntersecting).forEach((entry) => light(entry.target.id));
+  }, { rootMargin: '-20% 0px -75% 0px' });
+  document.querySelectorAll('main section[id]').forEach((section) => observer.observe(section));
+})();
+</script>
 </body>
 </html>

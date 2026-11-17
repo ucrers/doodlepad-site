@@ -86,20 +86,59 @@ h3 {
 }
 section ul, section ol { margin: 0; padding-left: 22px; display: grid; gap: 6px; }
 section li > ul { margin-top: 6px; }
-/* Guide sections jump under a little room at the top. */
-section[id] { scroll-margin-top: 16px; }
-/* The guide's contents: small chips that wrap, lighter than the page menu. */
+/* The guide, as a docs site: its sections listed in a sidebar at the left
+   that stays while the page scrolls, the one being read in sun yellow
+   (guide.html's script). On a phone the list folds into a Contents bar
+   stuck to the top; a tap on a section closes it. A tap jumps at once (a
+   smooth scroll over the long page felt slow: the user's catch). */
+.docs { display: block; }
+.docs main { max-width: 680px; }
+/* A nav, but not the page menu's row of chips. */
+.sidebar { display: block; position: sticky; top: 8px; z-index: 2; max-width: 680px; margin: 0 auto 28px; }
+.sidebar-toggle {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  font: 800 15px var(--body); color: var(--ink); cursor: pointer;
+  padding: 10px 16px; border-radius: 14px; background: var(--card);
+  border: 2.5px solid var(--line); box-shadow: 4px 4px 0 var(--shadow);
+}
+.sidebar-now { color: var(--muted); font-weight: 600; }
+.sidebar-toggle svg { flex: none; width: 14px; height: 14px; transition: transform 0.2s; }
+.sidebar-toggle path { fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.sidebar.open .sidebar-toggle svg { transform: rotate(180deg); }
+.side-toc {
+  list-style: none; margin: 8px 0 0; padding: 8px; display: none;
+  background: var(--card); border: 2.5px solid var(--line); border-radius: 16px;
+  box-shadow: 4px 4px 0 var(--shadow); max-height: 70vh; overflow-y: auto;
+}
+.sidebar.open .side-toc { display: grid; gap: 2px; }
+.side-toc a {
+  display: block; text-decoration: none; font-size: 15px; font-weight: 600; line-height: 1.3;
+  padding: 7px 12px; border-radius: 10px; border: 2px solid transparent; background: none;
+}
+.side-toc a:hover { background: color-mix(in srgb, var(--sun) 40%, transparent); }
+.side-toc a[aria-current="true"] { background: var(--sun); color: #26262C; border-color: var(--line); }
 .toc-title {
-  font-family: var(--body); font-size: 13px; font-weight: 800;
+  display: none; margin: 0 0 8px 12px; font-size: 13px; font-weight: 800;
   letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
 }
-section ul.toc { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-.toc a {
-  display: inline-block; text-decoration: none; font-size: 15px; font-weight: 600; line-height: 1.3;
-  padding: 6px 12px; border-radius: 999px; background: var(--card);
-  border: 1.5px solid color-mix(in srgb, var(--line) 30%, transparent);
+/* Each section stops under the Contents bar. */
+.docs section[id] { scroll-margin-top: 76px; }
+
+@media (min-width: 960px) {
+  .docs {
+    display: grid; grid-template-columns: 230px minmax(0, 680px); gap: 56px;
+    justify-content: center; align-items: start;
+  }
+  .docs main { margin: 0; }
+  .sidebar { top: 40px; margin: 0; max-height: calc(100vh - 80px); overflow-y: auto; padding: 4px 6px 8px 0; }
+  .sidebar-toggle { display: none; }
+  .toc-title { display: block; }
+  .side-toc {
+    display: grid; gap: 2px; margin: 0; padding: 0; max-height: none; overflow: visible;
+    background: none; border: 0; box-shadow: none;
+  }
+  .docs section[id] { scroll-margin-top: 24px; }
 }
-.toc a:hover { background: color-mix(in srgb, var(--sun) 45%, var(--card)); border-color: var(--line); }
 .path {
   font-weight: 700;
   background: color-mix(in srgb, var(--sun) 35%, transparent);
